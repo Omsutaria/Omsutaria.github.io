@@ -188,7 +188,12 @@ header {
 }
 .th-dot { width: 10px; height: 10px; border-radius: 50%; }
 .term-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); margin-left: 8px; letter-spacing: .05em; }
-.term-body { padding: 20px 22px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; }
+.term-body { padding: 20px 22px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; max-height: 420px; min-height: 420px; overflow-y: auto; position: relative; cursor: text; }
+.term-body::-webkit-scrollbar { width: 6px; }
+.term-body::-webkit-scrollbar-thumb { background: rgba(15,244,255,.2); border-radius: 3px; }
+.term-body::-webkit-scrollbar-track { background: transparent; }
+#termInputLine { flex-wrap: wrap; }
+#termTyped { color: var(--text); white-space: pre-wrap; word-break: break-all; }
 .tl { display: flex; gap: 8px; }
 .tl .prompt { color: var(--lime); flex-shrink: 0; }
 .tl .cmd { color: var(--text); }
@@ -542,22 +547,16 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
           <div class="th-dot" style="background:#28CA41"></div>
           <div class="term-title">om@kali:~$ — threat-hunter</div>
         </div>
-        <div class="term-body" id="termBody">
-          <div class="tl"><span class="prompt">❯</span><span class="cmd">whoami</span></div>
-          <div class="tl"><span class="out"><span class="hi">om_sutaria</span> — cybersecurity engineer</span></div>
-          <div class="tl"><span class="prompt">❯</span><span class="cmd">nmap -sV --script vuln 192.168.1.1</span></div>
-          <div class="tl"><span class="warn">Scanning... 1000 ports</span></div>
-          <div class="tl"><span class="success">OPEN  22/ssh   OpenSSH 8.4</span></div>
-          <div class="tl"><span class="err">VULN  80/http  CVE-2021-41773 CRITICAL</span></div>
-          <div class="tl"><span class="prompt">❯</span><span class="cmd">python3 NetVulnScanner.py --target 10.0.0.1</span></div>
-          <div class="tl"><span class="success">Scanned 1000 ports in 3.2s | 15 CVEs matched</span></div>
-          <div class="tl"><span class="err">CRITICAL: Heartbleed detected on 443/https</span></div>
-          <div class="tl"><span class="prompt">❯</span><span class="cmd">python3 nids_engine.py --mode hybrid</span></div>
-          <div class="tl"><span class="hi">Snort → RF → LSTM pipeline active</span></div>
-          <div class="tl"><span class="warn">Threat Score: 91/100 → DDoS signature</span></div>
-          <div class="tl"><span class="prompt">❯</span><span class="cmd"><span class="cursor-blink"></span></span></div>
+        <div class="term-body" id="termBody" onclick="focusTermInput()">
+          <div id="termOutput"></div>
+          <div class="tl" id="termInputLine">
+            <span class="prompt">❯</span>
+            <span class="cmd" id="termTyped"></span><span class="cursor-blink" id="termCursor"></span>
+          </div>
+          <input id="termInput" autocomplete="off" autocapitalize="off" spellcheck="false" style="position:absolute; left:-9999px; opacity:0;">
         </div>
       </div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim); margin-top:10px; text-align:center; letter-spacing:.05em;">click the terminal · type <span style="color:var(--cyan)">help</span> to begin</div>
     </div>
   </div>
 </section>
@@ -1152,6 +1151,175 @@ document.getElementById('cert-modal').addEventListener('click', function(e) {
   if (e.target === this) closeCertModal();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCertModal(); });
+
+// ── INTERACTIVE TERMINAL ──
+(function(){
+  const termBody   = document.getElementById('termBody');
+  const termOutput = document.getElementById('termOutput');
+  const termTyped  = document.getElementById('termTyped');
+  const termInput  = document.getElementById('termInput');
+  const RESUME_URL = 'https://drive.google.com/file/d/1SF6_xeDn-EIlPRupoibFBkd34sYdV1Qr/view?usp=drive_link';
+
+  let history = [];
+  let histPos = 0;
+
+  function addLine(text, cls){
+    const div = document.createElement('div');
+    div.className = 'tl';
+    const span = document.createElement('span');
+    span.className = cls || 'out';
+    span.textContent = text;
+    div.appendChild(span);
+    termOutput.appendChild(div);
+  }
+
+  function addPromptEcho(cmdText){
+    const div = document.createElement('div');
+    div.className = 'tl';
+    div.innerHTML = '<span class="prompt">❯</span><span class="cmd"></span>';
+    div.querySelector('.cmd').textContent = cmdText;
+    termOutput.appendChild(div);
+  }
+
+  function scrollBottom(){
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  const commands = {
+    help: () => {
+      addLine('Available commands:', 'out');
+      addLine('  whoami        — quick bio & role summary', 'out');
+      addLine('  skills        — technical skill stack', 'out');
+      addLine('  experience    — internships & work history', 'out');
+      addLine('  projects      — security tools & projects built', 'out');
+      addLine('  education     — degree, CGPA & certifications', 'out');
+      addLine('  contact       — how to reach me', 'out');
+      addLine('  resume        — open resume in a new tab', 'out');
+      addLine('  clear         — clear the terminal', 'out');
+      addLine('  sudo hire-me  — ...just try it', 'out');
+      addLine('  help          — show this list', 'out');
+    },
+    whoami: () => {
+      addLine('om_sutaria — cybersecurity engineering graduate', 'hi');
+      addLine('B.Tech CSE (Cybersecurity) · Maharishi University of Information Technology, Noida', 'out');
+      addLine('Target roles: Junior Pentester · VAPT Analyst · Security Analyst · SOC L1', 'out');
+      addLine('Status: Immediate joiner', 'success');
+    },
+    skills: () => {
+      addLine('Security Tools : Burp Suite, Nmap, Metasploit, Nessus, Wireshark, SQLMap, Hydra, John the Ripper', 'out');
+      addLine('Networking     : TCP/IP, DNS/DHCP, VPN/Firewall, OSI Model, Subnetting, Packet Analysis', 'out');
+      addLine('Programming    : Python, SQL, Bash, PHP, HTML', 'out');
+      addLine('Cloud & IT     : AWS Associate, AWS Security, IAM, Active Directory', 'out');
+      addLine('GRC            : ISO/IEC 27001:2022, GDPR, NIST', 'out');
+      addLine('AppSec         : SAST, SCA, DAST, OWASP Top 10', 'out');
+    },
+    experience: () => {
+      addLine('[iMaker Technology Pvt. Ltd.] VAPT Intern — Jul 2025 to Sep 2025', 'hi');
+      addLine('  → OWASP Top 10 VAPT on live apps, remediation reporting', 'out');
+      addLine('[Indian Police Cybercrime Branch] Cybersecurity Intern — Jul 2024 to Aug 2024', 'hi');
+      addLine('  → Digital forensics, OSINT, traced attacker IP in active case', 'out');
+      addLine('[Threat Prism / 1stop, IIT Guwahati] Industrial Program — Mar to Apr 2025', 'hi');
+      addLine('  → Built the Information Gathering Tool (OSINT recon)', 'out');
+      addLine('[Skolar] Cybersecurity Intern — Oct to Dec 2023', 'hi');
+      addLine('  → Fundamentals training + threat detection practice', 'out');
+    },
+    projects: () => {
+      addLine('1. AI-Augmented Hybrid NIDS — Snort → Random Forest → LSTM', 'success');
+      addLine('   92.91% accuracy | <1% FPR | 83% zero-day detection [Final Year Project]', 'out');
+      addLine('2. NetVulnScanner — multi-threaded Python scanner', 'success');
+      addLine('   1000+ ports in ~3s | 15 real CVE signatures matched', 'out');
+      addLine('3. WebSecTester — OWASP Top 10 web app auditor', 'success');
+      addLine('   10 automated checks | XSS, SQLi, CORS, SSL/TLS detection', 'out');
+      addLine('→ github.com/Omsutaria', 'warn');
+    },
+    education: () => {
+      addLine('B.Tech CSE (Cybersecurity) — Maharishi University of Information Technology, Noida', 'hi');
+      addLine('2022–2026 · CGPA 7.2 (69.43%)', 'success');
+      addLine('Diploma — Craw Security, Delhi: CEH, Web/IoT/Mobile PT, Forensics, AWS Security (2025–2026)', 'out');
+    },
+    contact: () => {
+      addLine('Email    : omsutaria.om@gmail.com', 'out');
+      addLine('Phone    : +91 9898708078', 'out');
+      addLine('LinkedIn : linkedin.com/in/om-sutaria-cybersecurity', 'out');
+      addLine('GitHub   : github.com/Omsutaria', 'out');
+    },
+    resume: () => {
+      addLine('Opening resume in a new tab...', 'success');
+      window.open(RESUME_URL, '_blank');
+    },
+    clear: () => {
+      termOutput.innerHTML = '';
+    },
+    'sudo hire-me': () => {
+      addLine('[sudo] password for om: ********', 'out');
+      addLine('Access granted.', 'success');
+      addLine('Loading candidate profile... 100%', 'warn');
+      addLine('✔ Immediate joiner   ✔ VAPT trained   ✔ Zero fluff', 'hi');
+      addLine('Recommendation: HIRE OM SUTARIA', 'success');
+      addLine('📧 omsutaria.om@gmail.com', 'out');
+    }
+  };
+
+  function runCommand(raw){
+    const cmd = raw.trim();
+    addPromptEcho(cmd);
+    if (cmd === '') { scrollBottom(); return; }
+    const key = cmd.toLowerCase();
+    if (commands[key]) {
+      commands[key]();
+    } else {
+      addLine(`bash: ${cmd}: command not found`, 'err');
+      addLine("Type 'help' to see available commands.", 'out');
+    }
+    scrollBottom();
+  }
+
+  // Boot sequence
+  const bootLines = [
+    ['whoami', null],
+    ['om_sutaria — cybersecurity engineering graduate', 'hi'],
+    ["Type 'help' to see available commands.", 'warn']
+  ];
+  bootLines.forEach(([text, cls]) => {
+    if (cls === null) addPromptEcho(text);
+    else addLine(text, cls);
+  });
+
+  window.focusTermInput = function(){
+    termInput.focus();
+  };
+
+  termInput.addEventListener('input', () => {
+    termTyped.textContent = termInput.value;
+    scrollBottom();
+  });
+
+  termInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = termInput.value;
+      if (val.trim() !== '') { history.push(val); }
+      histPos = history.length;
+      runCommand(val);
+      termInput.value = '';
+      termTyped.textContent = '';
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histPos > 0) { histPos--; termInput.value = history[histPos] || ''; termTyped.textContent = termInput.value; }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histPos < history.length) {
+        histPos++;
+        termInput.value = history[histPos] || '';
+        termTyped.textContent = termInput.value;
+      }
+    }
+  });
+
+  // Auto-focus once the hero animates in, and on any click within the terminal
+  setTimeout(() => { termInput.focus(); }, 1300);
+  termBody.addEventListener('click', () => termInput.focus());
+})();
 </script>
 </body>
 </html>
