@@ -369,6 +369,48 @@ header {
 .ccb-part { background: rgba(255,209,102,.08); border: 1px solid rgba(255,209,102,.2); color: var(--gold); }
 
 .cert-hidden { display: none !important; }
+.cert-card { cursor: none; }
+
+/* ── CERT MODAL ── */
+#cert-modal {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(3,8,13,.92);
+  backdrop-filter: blur(20px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+#cert-modal.open { opacity: 1; pointer-events: all; }
+.cm-box {
+  background: var(--ink2);
+  border: 1px solid rgba(15,244,255,.18);
+  border-radius: 12px;
+  max-width: 860px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  transform: scale(.94) translateY(20px);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+#cert-modal.open .cm-box { transform: scale(1) translateY(0); }
+.cm-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 20px 24px; border-bottom: 1px solid var(--rim);
+  position: sticky; top: 0; background: var(--ink2); z-index: 1;
+}
+.cm-info h3 { font-size: 15px; font-weight: 500; color: var(--white); line-height: 1.4; }
+.cm-info p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--cyan); letter-spacing: .2em; text-transform: uppercase; margin-top: 6px; }
+.cm-close {
+  background: none; border: 1px solid var(--rim); color: var(--dim);
+  width: 32px; height: 32px; border-radius: 5px; cursor: none;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0; margin-left: 16px;
+}
+.cm-close:hover { border-color: var(--cyan); color: var(--cyan); }
+.cm-body { padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 120px; justify-content: center; }
+#cm-img { width: 100%; border-radius: 6px; border: 1px solid var(--rim); display: none; }
+.cm-loader { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); letter-spacing: .15em; animation: blink-dot 1s infinite; }
+.cm-actions { display: flex; gap: 10px; }
 
 /* ── CONTACT ── */
 #contact { background: var(--ink); overflow: hidden; position: relative; }
@@ -478,7 +520,7 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
         Penetration Tester<span class="sep">|</span>VAPT Analyst<span class="sep">|</span>SOC L1<span class="sep">|</span>Security Researcher
       </div>
       <p class="hero-bio">
-        Final-year cybersecurity engineer with real-world VAPT experience, government-certified cybercrime investigation internship, and an AI-augmented NIDS achieving 99.1% accuracy. Ready to contribute from day one.
+        Final-year cybersecurity engineer with real-world VAPT experience, government-certified cybercrime investigation internship, and an AI-augmented NIDS achieving 92.91% accuracy. Ready to contribute from day one.
       </p>
       <div class="hero-actions">
         <a href="mailto:omsutaria.om@gmail.com" class="btn-primary">⌁ Hire Me</a>
@@ -486,7 +528,7 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
         <a href="https://linkedin.com/in/om-sutaria-cybersecurity" target="_blank" class="btn-outline">in LinkedIn</a>
       </div>
       <div class="hero-numbers">
-        <div class="hn"><div class="hn-val">99.1%</div><div class="hn-lbl">NIDS Accuracy</div></div>
+        <div class="hn"><div class="hn-val">92.91%</div><div class="hn-lbl">NIDS Accuracy</div></div>
         <div class="hn"><div class="hn-val">&lt;1%</div><div class="hn-lbl">False Positive Rate</div></div>
         <div class="hn"><div class="hn-val">13+</div><div class="hn-lbl">Certifications</div></div>
         <div class="hn"><div class="hn-val">2+</div><div class="hn-lbl">Years Hacking</div></div>
@@ -531,7 +573,7 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
       <div class="about-body reveal">
         <p>I'm a final-year <strong>B.Tech Computer Science student specializing in Cybersecurity</strong> at Maharishi University of Information Technology, Noida — graduating July 2026.</p>
         <p>My hands-on experience spans both government and private sector. I interned at the <strong>Indian Police Cybercrime Branch, Vyara</strong> — tracing attacker IPs, performing digital forensics, and supporting active police investigations. At <strong>iMaker Technology</strong>, I performed real VAPT against live applications, identifying SQLi, XSS, Broken Auth, and CSRF vulnerabilities and delivering professional remediation reports.</p>
-        <p>Beyond internships, I've built production-grade security tools: a <strong>multi-threaded network vulnerability scanner</strong> matching 15 real CVE signatures, a <strong>web application security auditor</strong> covering the full OWASP Top 10, and an <strong>AI-augmented NIDS</strong> combining Snort + Random Forest + LSTM for 99.1% detection accuracy.</p>
+        <p>Beyond internships, I've built production-grade security tools: a <strong>multi-threaded network vulnerability scanner</strong> matching 15 real CVE signatures, a <strong>web application security auditor</strong> covering the full OWASP Top 10, and an <strong>AI-augmented NIDS</strong> combining Snort + Random Forest + LSTM for 92.91% detection accuracy.</p>
         <p>I'm also completing a <strong>1-Year Diploma in Cybersecurity from Craw Security, Delhi</strong> covering CEH, Web App PT, IoT PT, Mobile PT, Forensics, AWS Security, and APT — making me one of the most comprehensively trained entry-level candidates you'll find.</p>
       </div>
       <div class="info-stack reveal">
@@ -769,7 +811,7 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
           <div class="proj-name">AI-Augmented Hybrid NIDS</div>
           <p class="proj-desc">3-layer hybrid NIDS: Snort 3.x → Random Forest → LSTM. Weighted Threat Scoring Engine (0–100) with per-IP behavioral profiling. Trained on NSL-KDD, CICIDS 2017, UNSW-NB15.</p>
           <ul class="proj-pts">
-            <li>Hybrid accuracy: 99.1% | RF alone: 98.2% | LSTM alone: 97.6% | FPR &lt;1% | Zero-day detection: 83%</li>
+            <li>Detection accuracy: 92.91% | FPR: &lt;1% | Zero-day detection: 83%</li>
             <li>Threat scoring: attack type 35%, severity 30%, IP reputation 20%, frequency 15%</li>
           </ul>
           <div class="proj-stack">
@@ -777,7 +819,7 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
           </div>
         </div>
         <div class="proj-metrics">
-          <div class="pm"><div class="pm-val">99.1%</div><div class="pm-lbl">Accuracy</div></div>
+          <div class="pm"><div class="pm-val">92.91%</div><div class="pm-lbl">Accuracy</div></div>
           <div class="pm"><div class="pm-val">83%</div><div class="pm-lbl">Zero-Day</div></div>
           <div class="pm"><div class="pm-val">&lt;1%</div><div class="pm-lbl">FPR</div></div>
         </div>
@@ -802,91 +844,91 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
     </div>
     <div class="cert-grid" id="certGrid">
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1cWH6UAGLWw3G-SYXkZ_HOMO0qmB9Zn67">
         <div class="cc-issuer" style="color:#FFB830">Craw Security — CRAW · New Delhi</div>
         <div class="cc-name">Ethical Hacking &amp; Countermeasures Certification</div>
         <div class="cc-bottom"><span class="cc-date">Apr 2026</span><span class="cc-badge ccb-sec">Security</span></div>
         <div class="cc-id">CRAWEN-68277267 · EC-Council, CompTIA, Cisco, Offensive Security Partner</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1AIeSLtDdULHFUr565dUCFv_5sfgVXZHE">
         <div class="cc-issuer" style="color:#FFB830">Craw Security — CRAW · New Delhi</div>
         <div class="cc-name">In-Depth Advanced Networking Certification</div>
         <div class="cc-bottom"><span class="cc-date">Jan 2026</span><span class="cc-badge ccb-sec">Security</span></div>
         <div class="cc-id">CRAWEN-68277267 · EC-Council, CompTIA, Cisco Partner</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1MRs4Fyg3pE3YIhX0JLb2JMgrambZ4Kb-">
         <div class="cc-issuer" style="color:#FFB830">Craw Security — CRAW · New Delhi</div>
         <div class="cc-name">Linux Essentials Training</div>
         <div class="cc-bottom"><span class="cc-date">Nov 2025</span><span class="cc-badge ccb-sec">Security</span></div>
         <div class="cc-id">CRAWEN-68277267 · Cyber Research &amp; Analysis Wing</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1sfnHqO_Kh-QwSZ8C3jtTdMcdCrPYxOlr">
         <div class="cc-issuer" style="color:#4CAF50">Cybrary</div>
         <div class="cc-name">Offensive Security Operations</div>
         <div class="cc-bottom"><span class="cc-date">Oct 25, 2025</span><span class="cc-badge ccb-sec">1 CEU/CPE</span></div>
         <div class="cc-id">CC-43d19eee-a9d2-45ef-b85f-d79413de1c15</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1ERHr_KNCZLcwpJwvS1sP6nD8bEuMqlhj">
         <div class="cc-issuer" style="color:#42A5F5">NullClass</div>
         <div class="cc-name">Cybersecurity — Learn to Hack Real-Time Web Application</div>
         <div class="cc-bottom"><span class="cc-date">May 16, 2025</span><span class="cc-badge ccb-sec">Security</span></div>
         <div class="cc-id">DOC: 6827368fb3290011dd130dca</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1A9__FoqR-Wcww0o-AlHXO1hd4PuUz5By">
         <div class="cc-issuer" style="color:#00BCD4">SysTools / MailXaminer</div>
         <div class="cc-name">Incident Response Essentials (SIRE)</div>
         <div class="cc-bottom"><span class="cc-date">Jan 18, 2025</span><span class="cc-badge ccb-sec">DFIR</span></div>
         <div class="cc-id">SYSSIRE25789 · ISO 9001 &amp; 27001 · GeM · Make in India</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="19zzMdgQJliv67vCNpfuFDDnAsyPPwkcB">
         <div class="cc-issuer" style="color:#FF9800">LumenXo Software Pvt. Ltd.</div>
         <div class="cc-name">Cybersecurity 101 Bootcamp — Completion</div>
         <div class="cc-bottom"><span class="cc-date">Feb–Mar 2025</span><span class="cc-badge ccb-sec">Security</span></div>
         <div class="cc-id">LUS005725003 · ISO 9001:2015, MSME Certified &amp; Verified</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="19zqCOAgJYXzIk5bZceddw_tkTNbRytBG">
         <div class="cc-issuer" style="color:#FF9800">LumenXo Inc.</div>
         <div class="cc-name">Ethical Hacking &amp; Career Path — Webinar</div>
         <div class="cc-bottom"><span class="cc-date">Mar 21, 2025</span><span class="cc-badge ccb-part">Participation</span></div>
         <div class="cc-id">Speaker: Nitesh Kumar Sah · Founder: Bibhash Ranjan Panda</div>
       </div>
 
-      <div class="cert-card" data-cat="security">
+      <div class="cert-card" data-cat="security" data-drive="1A0djfN7T2hmhhK6OlJ4DmFLbaJLViWkC">
         <div class="cc-issuer" style="color:#FF6B35">1stop · Alcheringa IIT Guwahati</div>
         <div class="cc-name">Cyber Security Program — Participation</div>
         <div class="cc-bottom"><span class="cc-date">Mar–May 2025</span><span class="cc-badge ccb-part">IIT Certified</span></div>
         <div class="cc-id">1stop.ai/verify-certificate · Coordinator: Navada</div>
       </div>
 
-      <div class="cert-card" data-cat="internship">
+      <div class="cert-card" data-cat="internship" data-drive="1gTRW1mHHphHkoznkv2x55MiQPt9wNDfV">
         <div class="cc-issuer" style="color:#AB47BC">iMaker Technology Pvt. Ltd.</div>
         <div class="cc-name">VAPT Cybersecurity Intern — Offer Letter</div>
         <div class="cc-bottom"><span class="cc-date">Jul 2025</span><span class="cc-badge ccb-int" style="color:#FFD166;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.08)">₹30,000/month</span></div>
         <div class="cc-id">3-month paid internship · HR: Swikrüty Panda</div>
       </div>
 
-      <div class="cert-card" data-cat="internship">
+      <div class="cert-card" data-cat="internship" data-drive="1AXmZcWrTEQulAWm2lzDuFwtO7h7I_N-v">
         <div class="cc-issuer" style="color:#42A5F5">Cybercrime Police Station, Tapi-Vyara</div>
         <div class="cc-name">Cybercrime Internship Completion Letter</div>
         <div class="cc-bottom"><span class="cc-date">Jul–Aug 2024</span><span class="cc-badge ccb-int">Government</span></div>
         <div class="cc-id">CYBER/929/2024 · Signed: D.S. Gohil, Police Inspector</div>
       </div>
 
-      <div class="cert-card" data-cat="internship">
+      <div class="cert-card" data-cat="internship" data-drive="1A2696Es_0k8JdrMLQKeoerSakcU9yIqC">
         <div class="cc-issuer" style="color:#FF6B35">Threat Prism / 1stop · IIT Guwahati</div>
         <div class="cc-name">Industrial Cybersecurity Program + Project Completion</div>
         <div class="cc-bottom"><span class="cc-date">Mar–May 2025</span><span class="cc-badge ccb-int">Internship</span></div>
         <div class="cc-id">Information Gathering Tool · 07 May 2025</div>
       </div>
 
-      <div class="cert-card" data-cat="internship">
+      <div class="cert-card" data-cat="internship" data-drive="1A7eeBjHHwEem1Gq_vT_SLPTNiPeoXFfM">
         <div class="cc-issuer" style="color:#F5C518">Skolar</div>
         <div class="cc-name">Cyber Security Internship + Course Completion</div>
         <div class="cc-bottom"><span class="cc-date">Oct–Dec 2023</span><span class="cc-badge ccb-int">Internship</span></div>
@@ -894,14 +936,14 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
       </div>
 
       <!-- PROGRAMMING -->
-      <div class="cert-card" data-cat="programming">
+      <div class="cert-card" data-cat="programming" data-drive="11qvLQXkh9LMNQ8Oev4zeq24HBkUiekQy">
         <div class="cc-issuer" style="color:#EF5350">IIT Bombay — Spoken Tutorial Project</div>
         <div class="cc-name">Java Training — Completion</div>
         <div class="cc-bottom"><span class="cc-date">Apr 26, 2025</span><span class="cc-badge ccb-prog">Score: 85% · 4 Credits</span></div>
         <div class="cc-id">4054994KFV · Ministry of Education, Govt. of India · MHRD</div>
       </div>
 
-      <div class="cert-card" data-cat="programming">
+      <div class="cert-card" data-cat="programming" data-drive="REPLACE_DRIVE_ID_15">
         <div class="cc-issuer" style="color:#FF7043">Ducat — The IT Training School</div>
         <div class="cc-name">Python — 1 Day Industrial Visit</div>
         <div class="cc-bottom"><span class="cc-date">2025</span><span class="cc-badge ccb-prog">Programming</span></div>
@@ -942,6 +984,26 @@ footer { padding: 28px 60px; background: rgba(3,8,13,.95); border-top: 1px solid
     <a href="https://github.com/Omsutaria" target="_blank">GitHub</a>
   </div>
 </footer>
+
+<!-- ── CERT MODAL ── -->
+<div id="cert-modal">
+  <div class="cm-box">
+    <div class="cm-head">
+      <div class="cm-info">
+        <h3 id="cm-title"></h3>
+        <p id="cm-issuer"></p>
+      </div>
+      <button class="cm-close" onclick="closeCertModal()">✕</button>
+    </div>
+    <div class="cm-body">
+      <p class="cm-loader" id="cm-loader">// loading certificate...</p>
+      <img id="cm-img" alt="Certificate" onload="cmImgLoaded()" onerror="cmImgError()" />
+      <div class="cm-actions" id="cm-actions" style="display:none">
+        <a id="cm-link" href="#" target="_blank" class="btn-outline" style="font-size:11px;padding:10px 20px;cursor:none;">Open in Drive ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ── CURSOR ──
@@ -1030,6 +1092,66 @@ document.querySelectorAll('.cf').forEach(btn=>{
 
 // ── STAGGER CERT CARDS ──
 document.querySelectorAll('.cert-card').forEach((c,i)=>{ c.style.transitionDelay=(i*.04)+'s'; });
+
+// ── CERT MODAL ──
+document.querySelectorAll('.cert-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const fileId = card.dataset.drive || '';
+    const title  = card.querySelector('.cc-name')?.textContent  || 'Certificate';
+    const issuer = card.querySelector('.cc-issuer')?.textContent || '';
+
+    document.getElementById('cm-title').textContent  = title;
+    document.getElementById('cm-issuer').textContent = issuer;
+
+    const img     = document.getElementById('cm-img');
+    const loader  = document.getElementById('cm-loader');
+    const actions = document.getElementById('cm-actions');
+    const link    = document.getElementById('cm-link');
+
+    img.style.display     = 'none';
+    loader.style.display  = 'block';
+    loader.textContent    = '// loading certificate...';
+    actions.style.display = 'none';
+
+    if (fileId && !fileId.startsWith('REPLACE')) {
+      img.src   = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      link.href = `https://drive.google.com/file/d/${fileId}/view`;
+    } else {
+      loader.textContent    = '// certificate image not linked yet.';
+      actions.style.display = 'none';
+    }
+
+    document.getElementById('cert-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+function cmImgLoaded() {
+  document.getElementById('cm-img').style.display    = 'block';
+  document.getElementById('cm-loader').style.display = 'none';
+  document.getElementById('cm-actions').style.display = 'flex';
+}
+function cmImgError() {
+  document.getElementById('cm-loader').textContent   = '⚠ Could not load image — open in Drive instead.';
+  document.getElementById('cm-loader').style.animation = 'none';
+  document.getElementById('cm-actions').style.display = 'flex';
+}
+function closeCertModal() {
+  document.getElementById('cert-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    const img = document.getElementById('cm-img');
+    img.src = ''; img.style.display = 'none';
+    document.getElementById('cm-loader').style.display  = 'block';
+    document.getElementById('cm-loader').textContent    = '// loading certificate...';
+    document.getElementById('cm-loader').style.animation = '';
+    document.getElementById('cm-actions').style.display = 'none';
+  }, 350);
+}
+document.getElementById('cert-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeCertModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCertModal(); });
 </script>
 </body>
 </html>
